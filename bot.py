@@ -9,7 +9,7 @@ all_frogs = 0
 
 @bot.message_handler(content_types=['text', 'sticker'])
 def count_frogs_batch(message):
-    if message.text == ':frog':
+    if message.sticker.file_id == 'CAACAgIAAxkBAAEDth9h59KFVMe1qFcMF9bVixPktOkwYgACIgADD27HL7Xv-gwxDzfiIwQ' || message.sticker.file_id == 'CAACAgIAAxkBAAEDtiFh59KP8EfEmJo_dFl2ZqSNXY4Y-QACIQADD27HL2ZpywtgpJSmIwQ':
         batch_frogs_count++
         all_frogs++
         user_frog_count.set_value(message.user.id, user_frog_count.pop(message.user.id)++)
