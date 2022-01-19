@@ -4,4 +4,5 @@ This telegram chat bot was writen to one working meme telegram group where peopl
 
 It has ability for:
   - count frog messages batch length,
-  - tell how many stickers did you send
+  - tell how many stickers did you send,
+  - count frog message batch length record and show it on command.
