@@ -11,7 +11,6 @@ class Stats:
         self.overall = 0
         self.users = dict()
         self.file_path = file_path
-        self.save()
     def getUserById(self, id):
         if str(id) in self.users:
             return self.users[str(id)]
