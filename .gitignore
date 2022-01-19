@@ -1,0 +1,6 @@
+.env
+.stats.txt
+.idea
+__pycache__
+stats
+stats.txt
