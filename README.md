@@ -6,3 +6,6 @@ It has ability for:
   - count frog messages batch length,
   - tell how many stickers did you send,
   - count frog message batch length record and show it on command.
+
+Next goals:
+  Right now bot stores everything in local memory and if we will restart bot we will loose all data. So it needs some kind of database.
