@@ -21,3 +21,19 @@ class BotDB:
     def save_chat_record(self, newRecord, chatId):
         self.cursor.execute("UPDATE stats SET `frog_combo_record` = ? WHERE `chat_id` = ?", (newRecord, chatId))
         return self.conn.commit()
+
+    def increment_chat_overall_frogs_count(chatId):
+        self.cursor.execute("UPDATE stats SET `overall_frog_count` = `overall_frog_count` + 1 WHERE `chat_id` = ?", (chatId))
+        return self.conn.commit()
+
+    def user_exists(username):
+        result = self.cursor.execute("SELECT `username` FROM useres WHERE `username` = ?", (username))
+        return bool(len(result.fetchall()))
+
+    def create_user(self, username, chatId):
+        self.cursor.execute("INSERT INTO users (`username`, `frog_count`, `chat_id`) VALUE (?, 0, ?)", (username, chatId))
+        return self.conn.commit()
+
+    def get_chat_overall_frogs_count(chatId):
+        result = self.cursor.execute("SELECT `frog_count` FROM stats WHERE `chat_id` = ?", (chatId))
+        return result.fetch()

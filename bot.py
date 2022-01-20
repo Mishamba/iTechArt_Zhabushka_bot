@@ -1,32 +1,31 @@
 import telebot
 import config
 from stats import Stats, User
+from bot import BotDB
 
 bot = telebot.TeleBot(config.TOKEN)
-stats = Stats('stats.txt')
-stats.load()
-MIN_FROG_COMBO = 0
 frog_combo = 0
 frog_stickers = ['AgADIQADD27HLw', 'AgADIgADD27HLw']
 
 @bot.message_handler(commands=['how_much_is_the_frog'])
 def send_frogs_quantity(message):
     combo_breaker(message)
-    bot.send_message(message.chat.id, f'{stats.overall}🐸 were sent!')
+    overall = BotDB.get_chat_overall_frogs_count(message.chat.id)_
+    bot.send_message(message.chat.id, f'{overall}🐸 were sent!')
 
 @bot.message_handler(commands=['my_frogs'])
 def count_users_frogs(message):
     combo_breaker(message)
-    user = stats.getUserById(message.from_user.id)
-    if user != None:
-        bot.send_message(message.chat.id, f'{user.name} sent {user.frogCount}🐸! KWWAAAAA!!!')
-    else:
-        bot.send_message(message.chat.id, f'{message.from_user.first_name} sent 0🐸((((((')
+    overall = 0
+    if BotDB.user_exitst:
+        overall = BotDB.get_user_frogs_count(message.user.name)
+    bot.send_message(message.chat.id, f'{message.user.name} sent {overall}🐸! KWWAAAAA!!!')
 
 @bot.message_handler(commands=['record'])
 def send_batch_record(message):
     combo_breaker(message)
-    bot.send_message(message.chat.id, f'Greatest frogs combo length was {stats.record}🐸. KWWAAAAAAAAA!!!')
+    record = BotDB.get_chat_frog_combo_record(message.chat.id)
+    bot.send_message(message.chat.id, f'Greatest frogs combo length was {record}🐸. KWWAAAAAAAAA!!!')
 
 @bot.message_handler(commands=['kwa'])
 def send_batch_record(message):
@@ -43,14 +42,12 @@ def greetings_new_member(message):
 
 def combo_breaker(message):
     global frog_combo
-    if frog_combo > MIN_FROG_COMBO:
-        bot.send_message(message.chat.id, f'FROG COMBO: {frog_combo}🐸')
-        if frog_combo > stats.record:
-            print(stats.record)
-            bot.send_message(message.chat.id, f'NEW RECORD!!!!!!!!: {frog_combo}🐸!!!!!  KWWAAAAA!!!')
-            stats.record = frog_combo
+    bot.send_message(message.chat.id, f'FROG COMBO: {frog_combo}🐸')
+    previous_record = BotDB.get_chat_frog_combo_record(message.chat.id)
+    if frog_combo > previous_record:
+        bot.send_message(message.chat.id, f'NEW RECORD!!!!!!!!: {frog_combo}🐸!!!!!  KWWAAAAA!!!')
+        BotDB.save_chat_record(frog_combo, message.chat.id)
         frog_combo = 0
-        stats.save()
 
 @bot.message_handler(content_types=['text', 'sticker', 'document', 'photo', 'video', 'video_note', 'voice', 'location'])
 def count_frogs_batch(message):
@@ -58,11 +55,10 @@ def count_frogs_batch(message):
     if hasattr(message, 'sticker') and message.sticker != None:
         if message.sticker.file_unique_id in frog_stickers:
             frog_combo += 1
-            stats.overall += 1
-            if stats.getUserById(message.from_user.id) == None:
-                stats.users[str(message.from_user.id)] = User(message.from_user.first_name)
-            stats.getUserById(message.from_user.id).frogCount += 1
-            stats.save()
+            BotDB.increment_chat_overall_frogs_count(message.chat.id)
+            if !BotDB.user_exists:
+                BotDB.create_user(message.user.name, message.chat.id)
+            BotDB.increment_user_frog_count(message.user.name)
         else:
             combo_breaker(message)
     else:
