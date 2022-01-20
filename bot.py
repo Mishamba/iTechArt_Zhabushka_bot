@@ -1,6 +1,5 @@
 import telebot
 import config
-from stats import Stats, User
 from bot import BotDB
 
 bot = telebot.TeleBot(config.TOKEN)
